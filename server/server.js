@@ -6,6 +6,12 @@ const mongoose = require("mongoose");
 const app = express();
 const cors = require("cors");
 app.use(cors());
+const fileUpload = require("express-fileupload");
+app.use(
+  fileUpload({
+    useTempFiles: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 const PORT = process.env.PORT || 4000;
@@ -15,6 +21,8 @@ app.listen(PORT, (req, res) => {
 });
 app.use("/users", userRouter);
 app.use("/api", require("./routes/categoryRouter"));
+app.use("/api", require("./routes/productRouter"));
+app.use("/api", require("./routes/upload"));
 mongoose
   .connect(URI, {})
   .then(() => {

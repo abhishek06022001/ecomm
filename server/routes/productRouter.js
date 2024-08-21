@@ -8,6 +8,6 @@ router
   .get(productController.getProducts);
 router
   .route("/category/:id")
-  .delete(auth, authAdmin, categoryController.deleteCategory) // Delete a category by ID
-  .put(auth, authAdmin, categoryController.updateCategory);
+  .delete(auth, authAdmin, productController.deleteProduct)
+  .put(auth, authAdmin, productController.updateProduct);
 module.exports = router;

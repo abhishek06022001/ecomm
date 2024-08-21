@@ -14,8 +14,8 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    imgURL: {
-      type: String,
+    image: {
+      type: Object,
       required: true,
     },
   },
@@ -23,4 +23,4 @@ const productSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-module.exports = productSchema;
+module.exports = mongoose.model("Product", productSchema);
