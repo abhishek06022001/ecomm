@@ -7,7 +7,7 @@ router
   .post(auth, authAdmin, productController.createProduct)
   .get(productController.getProducts);
 router
-  .route("/category/:id")
+  .route("/product/:id")
   .delete(auth, authAdmin, productController.deleteProduct)
   .put(auth, authAdmin, productController.updateProduct);
 module.exports = router;

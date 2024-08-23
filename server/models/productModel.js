@@ -5,6 +5,11 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    product_id: {
+      type: Number,
+      required: true,
+      unique: true,
+    },
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
