@@ -12,10 +12,22 @@ class APIfeatures {
   }
   sorting() {
     if (this.queryString.sort) {
-      const sortBy = this.queryString.sort.split(",").join("");
-      this.query = this.query.sort(sortBy);
+      const queryArr = this.queryString.sort.split(",");
+      let queryObj = {};
+      queryArr.forEach((element) => {
+        if (element.startsWith("-")) {
+          const negelement = element.substring(1);
+          console.log(negelement);
+
+          queryObj = { ...queryObj, [negelement]: -1 };
+        } else {
+          queryObj = { ...queryObj, [element]: 1 };
+        }
+      });
+      this.query = this.query.sort(queryObj);
+      console.log(queryObj);
     } else {
-      this.query = this.query.sort({ price: 1, name: -1 });
+      this.query = this.query.sort({ price: 1, product_id: -1 });
     }
     return this;
   }
