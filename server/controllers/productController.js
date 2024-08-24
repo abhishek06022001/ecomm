@@ -8,6 +8,12 @@ class APIfeatures {
     const arr = { ...this.queryString };
     const excludedFields = ["sort", "page", "limit"];
     excludedFields.forEach((element) => delete arr[element]);
+    let queryStr = JSON.stringify(arr);
+    console.log(queryStr);
+    queryStr = queryStr.replace(/(lte|gte|gt|lt|regex)/g, (match) => "$" + match);
+    console.log(queryStr);
+    let somejson = JSON.parse(queryStr);
+    this.query = this.query.find(somejson);
     return this;
   }
   sorting() {
@@ -17,29 +23,30 @@ class APIfeatures {
       queryArr.forEach((element) => {
         if (element.startsWith("-")) {
           const negelement = element.substring(1);
-          console.log(negelement);
-
+          // console.log(negelement);
           queryObj = { ...queryObj, [negelement]: -1 };
         } else {
           queryObj = { ...queryObj, [element]: 1 };
         }
       });
       this.query = this.query.sort(queryObj);
-      console.log(queryObj);
     } else {
-      this.query = this.query.sort({ price: 1, product_id: -1 });
+      this.query = this.query.sort({ createdAt: 1 });
     }
     return this;
   }
   pagination() {
-    console.log("pagination called");
+    const limit = this.queryString.limit || 2;
+    const page = this.queryString.page || 1;
+    const skip = (page - 1) * limit;
+    this.query = this.query.skip(skip).limit(limit);
     return this;
   }
 }
 const productController = {
   getProducts: async (req, res) => {
     try {
-      const features = new APIfeatures(Product.find(), req.query)
+      const features = new APIfeatures(Product, req.query)
         .filtering()
         .sorting()
         .pagination();
