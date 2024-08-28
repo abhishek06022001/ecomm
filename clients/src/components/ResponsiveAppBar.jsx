@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import shopify from '../assets/shopify-2.svg';
 const pages = ['Products', 'Login', 'Register'];
 const settings = ['Account', 'Dashboard', 'Logout'];
@@ -22,7 +22,11 @@ import axios from 'axios';
 import Modal from '@mui/material/Modal';
 import { TextField } from '@mui/material';
 function ResponsiveAppBar() {
+  const navigate = useNavigate();
   const state = React.useContext(GlobalState);
+  const [products, setProducts] = state.productAPI.products;
+
+
   const [isLogged, setIsLogged] = state.userApi.isLogged;
   const [isAdmin, setisAdmin] = state.userApi.isAdmin;
   const [category, setCategory] = state.categoryAPI.category;
@@ -47,36 +51,61 @@ function ResponsiveAppBar() {
   const handleClose = () => setOpen(false);
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setProduct({ ...product, image: file });
-    console.log(file); // Should log the actual file object
+    setSingleProduct({ ...newProduct, image: file });
+
   };
   const handleCreateProduct = async (e) => {
     e.preventDefault();
-    const submitData = product;
+    const submitData = newProduct;
     const formData = new FormData();
-    formData.append('file', product.image);
+    formData.append('file', newProduct.image);
     const imageDetails = await axios.post('/api/upload', formData, {
       headers: {
         Authorization: token,
       },
     });
-    console.log("The image details are", imageDetails);
-    console.log(submitData);
+    try {
+      const newProduct = {
+        product_id: submitData.product_id,
+        name: submitData.product_name,
+        categoryId: submitData.category,
+        price: submitData.product_price,
+        image: imageDetails.data
+      }
+      const prod = await axios.post('/api/product', newProduct, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      console.log("product new is ", prod);
+      handleClose();
+      setProducts([...products, prod.data.product]);
+      setSingleProduct({
+        product_name: '',
+        product_id: '',
+        product_price: '',
+        category: 1, image: null
+      });
+      navigate('/');
+    } catch (error) {
+      console.log(error.message);
+
+    }
   }
-  const [product, setProduct] = React.useState({
+  const [newProduct, setSingleProduct] = React.useState({
     product_name: '',
     product_id: '',
     product_price: '',
     category: 1, image: null
   });
   const handleCategoryChange = (e) => {
-    setProduct({
-      ...product,
+    setSingleProduct({
+      ...newProduct,
       category: e.target.value,
     });
   };
   const onChangeInput = (e) => {
-    setProduct({ ...product, [e.target.name]: e.target.value })
+    setSingleProduct({ ...newProduct, [e.target.name]: e.target.value })
   }
   const adminRouter = () => {
     return (
@@ -109,7 +138,7 @@ function ResponsiveAppBar() {
                         height: '2.5rem',
                       },
                     }}
-                    value={product.product_id}
+                    value={newProduct.product_id}
                   />
                 </div>
                 <div >
@@ -126,7 +155,7 @@ function ResponsiveAppBar() {
 
                       },
                     }}
-                    value={product.product_name}
+                    value={newProduct.product_name}
                   />
                 </div>
                 <div >
@@ -143,11 +172,11 @@ function ResponsiveAppBar() {
                         height: '2.5rem',
                       },
                     }}
-                    value={product.product_price}
+                    value={newProduct.product_price}
                   />
                 </div>
                 <div>
-                  <select name="category" id="category" value={product.category} onChange={onChangeInput}>
+                  <select name="category" id="category" value={newProduct.category} onChange={onChangeInput}>
                     <option value="0">Select A Category</option>
                     {category.map((element) => {
                       return <option key={element._id} value={element._id}>{element.name}</option>

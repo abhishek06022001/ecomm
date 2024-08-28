@@ -76,8 +76,10 @@ const productController = {
       if (!image) return res.status(400).json({ msg: "No Image Upload" });
       if (product)
         return res.status(400).json({ msg: "Product aleady exists" });
-      await newProduct.save();
-      return res.status(200).json({ msg: "Created a new Product" });
+      const savedProduct = await newProduct.save();
+      return res
+        .status(200)
+        .json({ msg: "Created a new Product", product: savedProduct });
     } catch (error) {
       return res.status(500).json({ msg: error.message });
     }

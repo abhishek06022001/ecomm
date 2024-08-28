@@ -6,6 +6,7 @@ function Product() {
     const state = useContext(GlobalState);
     const [products, setProducts] = state.productAPI.products;
     const [isAdmin] = state.userApi.isAdmin;
+    
     const token = state.token;
 
     return (
