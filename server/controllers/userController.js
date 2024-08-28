@@ -14,8 +14,8 @@ const userController = {
       await newUser.save();
       const accessToken = createAccessToken({ id: newUser._id });
       const refreshToken = createRefreshToken({ id: newUser._id });
-      console.log("accesstoken is", accessToken);
-      console.log("refreshToken is", refreshToken);
+      // console.log("accesstoken is", accessToken);
+      // console.log("refreshToken is", refreshToken);
       res.cookie("refreshtoken", refreshToken, {
         httpOnly: true,
         path: "/users/refresh_token",
@@ -29,6 +29,9 @@ const userController = {
     // returns access Token when needed dude  in the frontend
     try {
       const refreshToken = req.cookies.refreshtoken;
+      if (!refreshToken) {
+        return res.status(401).json({ msg: "No refresh token provided" });
+      }
       jwt.verify(refreshToken, process.env.REFRESH_TOKEN, (err, user) => {
         if (err) {
           return res.json({ msg: "Some error , refresh token not verified" });
@@ -37,7 +40,6 @@ const userController = {
 
         return res.json({ accessToken });
       });
-      return res.json({ msg: "Already registered" });
     } catch (err) {
       res.json({ msg: err.message });
     }
@@ -76,7 +78,7 @@ const userController = {
   },
   information: async (req, res) => {
     try {
-      console.log(req.user);
+      // console.log(req.user);
       const user = await User.findOne({ _id: req.user.id }).select("-password");
       return res.json(user);
     } catch (err) {}

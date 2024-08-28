@@ -5,7 +5,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 const cors = require("cors");
-app.use(cors());
+app.use(
+  cors({
+    // origin: "http://localhost:5173",
+    // methods: ["GET", "POST", "PUT", "DELETE"],
+    // allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 const fileUpload = require("express-fileupload");
 app.use(
   fileUpload({
@@ -19,7 +26,7 @@ const URI = process.env.URL;
 app.listen(PORT, (req, res) => {
   console.log("Server started");
 });
-app.use("/users", userRouter);
+app.use("/users", require("./routes/userRouter"));
 app.use("/api", require("./routes/categoryRouter"));
 app.use("/api", require("./routes/productRouter"));
 app.use("/api", require("./routes/upload"));

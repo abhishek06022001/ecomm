@@ -8,12 +8,11 @@ cloudinary.config({
   api_key: process.env.CLOUD_API_KEY,
   api_secret: process.env.CLOUD_API_SECRET,
 });
-// basic cloudinary config setup for making a connection right
+// Basic cloudinary config setup for making a connection right
 router.post("/upload", auth, authAdmin, (req, res) => {
   try {
     if (!req.files || Object.keys(req.files).length === 0)
       return res.status(400).send({ msg: "No file were uploaded" });
-
     const file = req.files.file;
     if (file.size > 1024 * 1024) {
       removeTmp(file.tempFilePath);

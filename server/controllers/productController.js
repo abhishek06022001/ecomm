@@ -9,9 +9,11 @@ class APIfeatures {
     const excludedFields = ["sort", "page", "limit"];
     excludedFields.forEach((element) => delete arr[element]);
     let queryStr = JSON.stringify(arr);
-    console.log(queryStr);
-    queryStr = queryStr.replace(/(lte|gte|gt|lt|regex)/g, (match) => "$" + match);
-    console.log(queryStr);
+    queryStr = queryStr.replace(
+      /(lte|gte|gt|lt|regex)/g,
+      (match) => "$" + match
+    );
+
     let somejson = JSON.parse(queryStr);
     this.query = this.query.find(somejson);
     return this;
@@ -23,7 +25,7 @@ class APIfeatures {
       queryArr.forEach((element) => {
         if (element.startsWith("-")) {
           const negelement = element.substring(1);
-          // console.log(negelement);
+
           queryObj = { ...queryObj, [negelement]: -1 };
         } else {
           queryObj = { ...queryObj, [element]: 1 };
@@ -36,7 +38,7 @@ class APIfeatures {
     return this;
   }
   pagination() {
-    const limit = this.queryString.limit || 2;
+    const limit = this.queryString.limit || 9;
     const page = this.queryString.page || 1;
     const skip = (page - 1) * limit;
     this.query = this.query.skip(skip).limit(limit);
