@@ -19,20 +19,14 @@ const settings = ['Account', 'Dashboard', 'Logout'];
 import { FaCartShopping } from "react-icons/fa6";
 import { GlobalState } from '../GlobalState';
 import axios from 'axios';
-
-
-
-
 import Modal from '@mui/material/Modal';
 import { TextField } from '@mui/material';
-
 function ResponsiveAppBar() {
   const state = React.useContext(GlobalState);
   const [isLogged, setIsLogged] = state.userApi.isLogged;
   const [isAdmin, setisAdmin] = state.userApi.isAdmin;
   const [category, setCategory] = state.categoryAPI.category;
   const [token] = state.token;
-
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   // for modal
@@ -51,29 +45,23 @@ function ResponsiveAppBar() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setProduct({ ...product, image: file });
+    console.log(file); // Should log the actual file object
+  };
   const handleCreateProduct = async (e) => {
     e.preventDefault();
     const submitData = product;
     const formData = new FormData();
     formData.append('file', product.image);
-   
-    const imageDetails = await axios.post('/api/upload',
-      formData,
-      {
-        headers: {
-          Authorization: token,
-          'Content-Type': 'multipart/form-data',
-        }
-      }
-    );
+    const imageDetails = await axios.post('/api/upload', formData, {
+      headers: {
+        Authorization: token,
+      },
+    });
     console.log("The image details are", imageDetails);
-
-    // const cat = await axios.post("/api/product", { submitData }, {
-    //   headers: { Authorization: token },
-    // });
-
     console.log(submitData);
-
   }
   const [product, setProduct] = React.useState({
     product_name: '',
@@ -90,7 +78,6 @@ function ResponsiveAppBar() {
   const onChangeInput = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value })
   }
-
   const adminRouter = () => {
     return (
       <>
@@ -168,7 +155,7 @@ function ResponsiveAppBar() {
                   </select>
                 </div>
                 <div>
-                  <input type="file" id="image" name="image" onChange={onChangeInput} />
+                  <input type="file" id="image" name="image" onChange={handleFileChange} />
                 </div>
                 <div  >
                   <Button type="submit" variant="contained" id="submitLogin">Submit </Button>
@@ -218,6 +205,7 @@ function ResponsiveAppBar() {
   const logOutUser = async () => {
     await axios.get('/users/logout');
     localStorage.clear();
+    //this is causing the rerender of the GlobalState dude
     setisAdmin(false);
     setIsLogged(false);
   }

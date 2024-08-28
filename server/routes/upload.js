@@ -3,6 +3,7 @@ const router = require("express").Router();
 const auth = require("../middleware/auth");
 const authAdmin = require("../middleware/authAdmin");
 const fs = require("fs");
+const { log } = require("console");
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUD_API_KEY,
@@ -11,6 +12,8 @@ cloudinary.config({
 // Basic cloudinary config setup for making a connection right
 router.post("/upload", auth, authAdmin, (req, res) => {
   try {
+    console.log("req is", req.files);
+
     if (!req.files || Object.keys(req.files).length === 0)
       return res.status(400).send({ msg: "No file were uploaded" });
     const file = req.files.file;

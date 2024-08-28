@@ -6,6 +6,7 @@ import CategoryApi from "./apis/CategoryApi";
 export const GlobalState = createContext();
 export const DataProvider = ({ children }) => {
   const [token, setToken] = useState(false);
+
   const refreshtoken = async () => {
     const res = await axios('/users/refresh_token');
     setToken(res.data.accessToken);

@@ -2,9 +2,13 @@ import { Box, Button, Container, Paper, TextField } from '@mui/material'
 import axios from 'axios';
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { GlobalState } from '../GlobalState';
 
 function Login() {
+  const navigate = useNavigate();
+  const state = React.useContext(GlobalState);
 
+  const [token, setToken] = state.token;
   const [user, setUser] = useState({
     email: '',
     password: ''
@@ -19,10 +23,11 @@ function Login() {
         "/users/login",
         { ...user }
       );
-    
-
-      localStorage.setItem('loggedIn', true);
-      window.location.href = '/';
+      if (res) {
+         localStorage.setItem('loggedIn', true);
+        setToken(res.data.accessToken);  
+        navigate('/');
+      }
     } catch (error) {
       console.error(error.response.data);
     }
